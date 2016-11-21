@@ -116,6 +116,7 @@ public class mazeCreator
 				}
 			}
 		}
+		s[2*(cell/n+1)-1][2*(cell%n+1)-1]=' ';
 	}
 	
 	public void display()
