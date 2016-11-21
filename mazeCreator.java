@@ -1,6 +1,7 @@
 package maze;
 
 import java.util.Scanner;
+import java.io.IOException;
 import java.util.Random;
 
 public class mazeCreator 
@@ -47,14 +48,13 @@ public class mazeCreator
 	
 	public void create()
 	{
-		int cell=0,wall=0,w=0,xCell=0,yCell=0,xWall=0,yWall=0,adjCell=0,count=0,c=0;
-		int prevCell[]={0,0,0};
+		int cell=0,wall=0,w=0,xCell=0,yCell=0,xWall=0,yWall=0,adjCell=0,count=0;
 		char prevWall = ' ';
 		DisjSets d=new DisjSets(n*n);
 		
 		while ((d.find(n*n-1)) != 0  )
 		{
-			//System.out.println("root of last"+(d.find(n*n-1)));
+//			cell=genRandom(n*n);
 			xCell=2*(cell/n+1)-1;
 			yCell=2*(cell%n+1)-1;
 //			System.out.println("cell:"+cell);
@@ -65,7 +65,7 @@ public class mazeCreator
 			{
 				xWall=xCell-1;
 				yWall=yCell;
-				adjCell=cell-n;
+ 				adjCell=cell-n;
 			}
 			if (w==1)
 			{
@@ -85,36 +85,24 @@ public class mazeCreator
 				yWall=yCell+1;
 				adjCell=cell+1;
 			}
-			
-			
+						
 			if ((xWall != 2*n && yWall != 2*n) && (xWall != 0 && yWall != 0))
 			{
 				
 				//d.display();
-				System.out.println("w:"+w);
+//				System.out.println("w:"+w);
 //				System.out.println("xWall:"+xWall);
 //				System.out.println("yWall:"+yWall);
 				if (s[xWall][yWall] !=' ' && d.find(adjCell)!= 0)
 				{
 					count=0;
-					//prevWall=s[xWall][yWall];
 					s[xWall][yWall]=' ';
 					s[xCell][yCell]=' ';
 //					System.out.println("adjCell:"+adjCell);
-					d.union(cell,adjCell);
-					cell=adjCell;	
-				}			
-				else
-				{
-					count++;
-					if (count>10)
-					{
-						//s[xWall][yWall]=prevWall;
-						cell=d.findPrev(cell);	
-						count=0;
-					}					
-				}
-			}
+					d.union(cell,adjCell);					
+				}	
+				cell=adjCell;	
+			}		
 		}
 		s[2*(cell/n+1)-1][2*(cell%n+1)-1]=' ';
 	}
