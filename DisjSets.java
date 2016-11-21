@@ -36,6 +36,7 @@ public class DisjSets
         public void display()
         {
         	for( int i = 0; i < s.length; i++ )
-            	System.out.print(s[ i ]+",");
+        		if (s[ i ] == -1)
+            	System.out.print( i +",");
         }
 }

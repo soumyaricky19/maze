@@ -35,14 +35,13 @@ public class mazeCreator
 				}	
 			}
 		}
-
 		s[1][0]=' ';
 		s[length-2][length-1]=' ';
 	}
 	
 	public int genRandom(int x)
 	{
-		return (int)(java.lang.Math.random()*100)%x;
+		return (int)(java.lang.Math.random()*10*n*n)%x;
 	}
 	
 	public void create()
@@ -51,10 +50,11 @@ public class mazeCreator
 		DisjSets d=new DisjSets(n*n);
 		
 //		while ((d.find(n*n-1)) != 0  )
-// 		while (count < n*n && d.find(n*n-1) != d.find(0))
-		while (count != n*n-1)
+//  	while (count != n*n-1 && d.find(n*n-1) != d.find(0))
+ 		while (count != n*n-1)
 //		while (d.find(n*n-1) != d.find(0))
 		{
+ 			
 			cell=genRandom(n*n);
 			xCell=2*(cell/n+1)-1;
 			yCell=2*(cell%n+1)-1;
@@ -99,7 +99,7 @@ public class mazeCreator
 //				System.out.println("adjCell:"+adjCell);
 //				System.out.println("ROOTcell:"+d.find(cell));
 //				System.out.println("ROOTadjCell:"+d.find(adjCell));
-				if (s[xWall][yWall] !=' ' && d.find(cell) != d.find(adjCell))
+				if (d.find(cell) != d.find(adjCell))
 				{
 					s[xWall][yWall]=' ';
 //					s[xCell][yCell]=' ';
@@ -109,7 +109,6 @@ public class mazeCreator
 //					System.out.println("Root of first:"+d.find(0));
 					count++;
 				}	
-				//cell=adjCell;	
 //				for (int i=0;i<n*n;i++)
 //				{
 //					if (d.find(cell) == cell)
@@ -121,8 +120,8 @@ public class mazeCreator
 		}
 		//Modify
 		s[2*(cell/n+1)-1][2*(cell%n+1)-1]=' ';
- 		System.out.println(d.find(0));
- 		System.out.println(d.find(n*n-1));
+ 		System.out.println("Hint:"+d.find(0)+"..Yes:"+d.find(n*n-1));
+ 		System.out.println();
 //		System.out.println("count"+count);
 		
 	}
