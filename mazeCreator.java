@@ -31,14 +31,13 @@ public class mazeCreator
 					if (j%2==0)
 						s[i][j]='|';
 					else 
-						s[i][j]= '0';
+						s[i][j]= ' ';
 				}	
 			}
 		}
-//		s[0][1]=' ';
+
 		s[1][0]=' ';
 		s[length-2][length-1]=' ';
-//		s[length-1][length-2]=' ';
 	}
 	
 	public int genRandom(int x)
@@ -49,12 +48,14 @@ public class mazeCreator
 	public void create()
 	{
 		int cell=0,wall=0,w=0,xCell=0,yCell=0,xWall=0,yWall=0,adjCell=0,count=0;
-		char prevWall = ' ';
 		DisjSets d=new DisjSets(n*n);
 		
-		while ((d.find(n*n-1)) != 0  )
+//		while ((d.find(n*n-1)) != 0  )
+ 		while (count < n*n && d.find(n*n-1) != d.find(0))
+//		while (count < n*n)
+//		while (d.find(n*n-1) != d.find(0))
 		{
-//			cell=genRandom(n*n);
+			cell=genRandom(n*n);
 			xCell=2*(cell/n+1)-1;
 			yCell=2*(cell%n+1)-1;
 //			System.out.println("cell:"+cell);
@@ -93,19 +94,32 @@ public class mazeCreator
 //				System.out.println("w:"+w);
 //				System.out.println("xWall:"+xWall);
 //				System.out.println("yWall:"+yWall);
-				if (s[xWall][yWall] !=' ' && d.find(adjCell)!= 0)
+//				if (s[xWall][yWall] !=' ' && d.find(adjCell)!= 0)
+				System.out.println("cell:"+cell);
+				System.out.println("adjCell:"+adjCell);
+				System.out.println("ROOTcell:"+d.find(cell));
+				System.out.println("ROOTadjCell:"+d.find(adjCell));
+				if (s[xWall][yWall] !=' ' && d.find(cell) != d.find(adjCell))
 				{
-					count=0;
 					s[xWall][yWall]=' ';
-					s[xCell][yCell]=' ';
-//					System.out.println("adjCell:"+adjCell);
-					d.union(cell,adjCell);					
+//					s[xCell][yCell]=' ';
+					d.union(d.find(cell),d.find(adjCell));		
+					System.out.println("Root:"+d.find(cell));
+					System.out.println("Root of last:"+d.find(n*n-1));
+					System.out.println("Root of first:"+d.find(0));
+					count++;
 				}	
-				cell=adjCell;	
+				//cell=adjCell;	
 			}		
 		}
+		//Modify
 		s[2*(cell/n+1)-1][2*(cell%n+1)-1]=' ';
+		System.out.println(d.find(0));
+		System.out.println(d.find(n*n-1));
+		System.out.println("count"+count);
+		
 	}
+	
 	
 	public void display()
 	{
