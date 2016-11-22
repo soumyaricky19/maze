@@ -1,21 +1,15 @@
 package maze;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Scanner;
 import javax.swing.*;
-import javax.swing.border.Border;
-
 import java.awt.*;
 
 public class mazeCreator 
 {
-	private int length=0,n=0;
+	private int length=0,n=0;	
 	char s[][];
-	int c=0;
-    private JButton b[][];
-//    JComponent gui;
-    JPanel gui;
+    private JButton b1[][],b2[][];
+    JPanel gui1,gui2;
 	mazeCreator(int n)
 	{
 		this.n=n;
@@ -26,33 +20,44 @@ public class mazeCreator
 	
 	public void init()
 	{
-		gui = new JPanel();
-		gui.setLayout(new GridLayout(length,length));
-		b=new JButton[length][length];
+		gui1 = new JPanel();
+		gui1.setLayout(new GridLayout(length,length));
+		b1=new JButton[length][length];
 		for (int i=0;i<length;i++)
-		{
-			
+		{			
 			for (int j=0;j<length;j++)
 			{
-			 	b[i][j]=new JButton();
-			 	b[i][j].setEnabled(false);
-			 	b[i][j].setBorderPainted(false);
+			 	b1[i][j]=new JButton();
+			 	b1[i][j].setEnabled(false);
+			 	b1[i][j].setBorderPainted(false);
 				if (i%2 == 0)
 				{	
-					b[i][j].setBackground(Color.BLACK);
+					b1[i][j].setBackground(Color.BLACK);
+					if (j%2==0)
+						s[i][j]='-';
+					else
+						s[i][j]='+';
 				}
 				else if (i%2 == 1)
 				{
 					if (j%2==0)
-						b[i][j].setBackground(Color.BLACK);
-					else 
-						b[i][j].setBackground(Color.WHITE);
+					{
+						b1[i][j].setBackground(Color.BLACK);
+						s[i][j]='|';
+					}
+					else
+					{
+						b1[i][j].setBackground(Color.WHITE);
+						s[i][j]=' ';
+					}
 				}				
-			gui.add(b[i][j]);
+			gui1.add(b1[i][j]);
 			}
 		}
-		b[1][0].setBackground(Color.WHITE);
-		b[length-2][length-1].setBackground(Color.WHITE);
+		b1[1][0].setBackground(Color.WHITE);
+		s[1][0]=' ';
+		b1[length-2][length-1].setBackground(Color.WHITE);
+		s[length-2][length-1]=' ';
 	}
 	
 	public int genRandom(int x)
@@ -62,7 +67,7 @@ public class mazeCreator
 	
 	public void create()
 	{
-		int cell=0,wall=0,w=0,xCell=0,yCell=0,xWall=0,yWall=0,adjCell=0,count=0;
+		int cell=0,w=0,xCell=0,yCell=0,xWall=0,yWall=0,adjCell=0,count=0;
 		DisjSets d=new DisjSets(n*n);
  		while (count != n*n-1)
 		{			
@@ -99,7 +104,8 @@ public class mazeCreator
 			{
 				if (d.find(cell) != d.find(adjCell))
 				{
-					b[xWall][yWall].setBackground(Color.WHITE);
+					b1[xWall][yWall].setBackground(Color.WHITE);
+					s[xWall][yWall]=' ';
 					d.union(d.find(cell),d.find(adjCell));		
 					count++;
 				}	
@@ -109,62 +115,68 @@ public class mazeCreator
 	
 	public void solve()
 	{
-		int cell=0,xCell=0,yCell=0,prevCell=0;
-		boolean dontcomerightagain=false,dontcomeleftagain=false,dontcomeupagain=false,dontcomedownagain=false;
+		int cell=0,xCell=0,yCell=0;
 		cell=length;
 		java.util.LinkedList<Integer> q=new java.util.LinkedList<Integer>();
-		Iterator<Integer>  itr=q.iterator();
 		q.add(cell);
-		while(cell != length*length-2-length)
+		while(cell != length*length-1-length)
 		{
 			xCell=cell/length;
 			yCell=cell%length;
-			System.out.println("xCell"+xCell);
-			System.out.println("yCell"+yCell);
-			System.out.println("q.peekLast()"+q.peekLast());
-				if (b[xCell][yCell+1].getBackground()==Color.WHITE && s[xCell][yCell+1] != '1' && !dontcomerightagain)				
+				if (s[xCell][yCell+1] == ' ')				
 				{
-					dontcomeleftagain=true;
-					dontcomerightagain=false;
+					s[xCell][yCell]='1';
 					q.add(cell+1);
 					cell=cell+1;
 					continue;
 				} 
-				if (b[xCell+1][yCell].getBackground()==Color.WHITE && s[xCell+1][yCell] != '1' && !dontcomedownagain)
+				if (s[xCell+1][yCell] == ' ')
 				{
-					dontcomeupagain=true;
-					dontcomedownagain=false;
+					s[xCell][yCell]='1';
 					q.add(cell+length);
 					cell=cell+length;
 					continue;
 				}	
 	
-				if (b[xCell][yCell-1].getBackground()==Color.WHITE && s[xCell][yCell-1] != '1' && !dontcomeleftagain)
+				if (s[xCell][yCell-1] == ' ')
 				{
-					dontcomerightagain=true;
-					dontcomeleftagain=false;
+					s[xCell][yCell]='1';
 					q.add(cell-1);
 					cell=cell-1;
 					continue;
 				}
 			
-				if (b[xCell-1][yCell].getBackground()==Color.WHITE && s[xCell-1][yCell] != '1' && !dontcomeupagain)
+				if (s[xCell-1][yCell] == ' ')
 				{
-					dontcomedownagain=true;
-					dontcomeupagain=false;		
+					s[xCell][yCell]='1';	
 					q.add(cell-length);
 					cell=cell-length;
 					continue;
 				}
-				dontcomerightagain=false;
-				dontcomeleftagain=false;
-				dontcomedownagain=false;
-				dontcomeupagain=false;	
+
 					s[xCell][yCell]='1';
 					q.removeLast();
-					cell=q.element();			
-				System.out.print(cell+",");				
+					cell=q.peekLast();
+					xCell=cell/length;
+					yCell=cell%length;
+					s[xCell][yCell]=' ';
 		}
+		
+		
+		gui2 = new JPanel();
+		gui2.setLayout(new GridLayout(length,length));
+		b2=b1;
+		while(!q.isEmpty())
+		{
+			cell=q.removeFirst();
+			xCell=cell/length;
+			yCell=cell%length;
+			b2[xCell][yCell].setBackground(Color.BLUE);
+		}
+		for (int i=0;i<length;i++)			
+			for (int j=0;j<length;j++)
+				gui2.add(b2[i][j]);
+			
 	}
 
 	public void display()
@@ -178,23 +190,33 @@ public class mazeCreator
 			System.out.println("");
 		}
 	}
-	public final JPanel getGui() 
+	public final JPanel getGui1() 
 	{
-        return gui;
+        return gui1;
+	}
+	public final JPanel getGui2() 
+	{
+        return gui2;
 	}
 	public static void main(String args[])
 	{
 		int n=0;
-		Scanner s=new Scanner(System.in);
+		Scanner sc=new Scanner(System.in);
 		System.out.println("Please enter the grid size: ");
-		n=s.nextInt();		
+		n=sc.nextInt();		
+		sc.close();
 		mazeCreator m=new mazeCreator(n);
+
 		m.create();
-		JFrame f=new JFrame("Maze");
-        f.add(m.getGui());
-    //    f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        f.pack();
-        f.setVisible(true);
+		m.display();
+
         m.solve();
+        JFrame f2=new JFrame("Maze2");
+        f2.add(m.getGui2());
+        f2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        f2.pack();
+        f2.setVisible(true);
+      
+        System.out.println("THE APPLET HAS THE SOLVED VERSION OF THE MAZE THAT IS DISPLAYED HERE!");        
 	}
 }
