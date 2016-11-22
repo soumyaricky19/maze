@@ -29,10 +29,6 @@ public class DisjSets
             else
                 return find( s[ x ] );
         }
-        public int findPrev( int x )
-        {
-                return  s[ x ] ;
-        }
         public void display()
         {
         	for( int i = 0; i < s.length; i++ )

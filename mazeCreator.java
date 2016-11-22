@@ -1,7 +1,11 @@
 package maze;
 
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Scanner;
 import javax.swing.*;
+import javax.swing.border.Border;
+
 import java.awt.*;
 
 public class mazeCreator 
@@ -19,6 +23,7 @@ public class mazeCreator
 		s=new char[length][length];
 		init();		
 	}
+	
 	public void init()
 	{
 		gui = new JPanel();
@@ -30,17 +35,18 @@ public class mazeCreator
 			for (int j=0;j<length;j++)
 			{
 			 	b[i][j]=new JButton();
+			 	b[i][j].setEnabled(false);
+			 	b[i][j].setBorderPainted(false);
 				if (i%2 == 0)
 				{	
 					b[i][j].setBackground(Color.BLACK);
-					b[i][j].setIcon(null);
 				}
 				else if (i%2 == 1)
 				{
 					if (j%2==0)
 						b[i][j].setBackground(Color.BLACK);
 					else 
-						b[i][j].setBackground(Color.YELLOW);
+						b[i][j].setBackground(Color.WHITE);
 				}				
 			gui.add(b[i][j]);
 			}
@@ -93,15 +99,72 @@ public class mazeCreator
 			{
 				if (d.find(cell) != d.find(adjCell))
 				{
-					b[xWall][yWall].setBackground(Color.WHITE);;
+					b[xWall][yWall].setBackground(Color.WHITE);
 					d.union(d.find(cell),d.find(adjCell));		
 					count++;
 				}	
 			}		
 		}
-	//	b[2*(cell/n+1)-1][2*(cell%n+1)-1].setBackground(Color.WHITE);;
- 		System.out.println("Hint:"+d.find(0)+"..Yes:"+d.find(n*n-1));
- 		System.out.println();
+	}
+	
+	public void solve()
+	{
+		int cell=0,xCell=0,yCell=0,prevCell=0;
+		boolean dontcomerightagain=false,dontcomeleftagain=false,dontcomeupagain=false,dontcomedownagain=false;
+		cell=length;
+		java.util.LinkedList<Integer> q=new java.util.LinkedList<Integer>();
+		Iterator<Integer>  itr=q.iterator();
+		q.add(cell);
+		while(cell != length*length-2-length)
+		{
+			xCell=cell/length;
+			yCell=cell%length;
+			System.out.println("xCell"+xCell);
+			System.out.println("yCell"+yCell);
+			System.out.println("q.peekLast()"+q.peekLast());
+				if (b[xCell][yCell+1].getBackground()==Color.WHITE && s[xCell][yCell+1] != '1' && !dontcomerightagain)				
+				{
+					dontcomeleftagain=true;
+					dontcomerightagain=false;
+					q.add(cell+1);
+					cell=cell+1;
+					continue;
+				} 
+				if (b[xCell+1][yCell].getBackground()==Color.WHITE && s[xCell+1][yCell] != '1' && !dontcomedownagain)
+				{
+					dontcomeupagain=true;
+					dontcomedownagain=false;
+					q.add(cell+length);
+					cell=cell+length;
+					continue;
+				}	
+	
+				if (b[xCell][yCell-1].getBackground()==Color.WHITE && s[xCell][yCell-1] != '1' && !dontcomeleftagain)
+				{
+					dontcomerightagain=true;
+					dontcomeleftagain=false;
+					q.add(cell-1);
+					cell=cell-1;
+					continue;
+				}
+			
+				if (b[xCell-1][yCell].getBackground()==Color.WHITE && s[xCell-1][yCell] != '1' && !dontcomeupagain)
+				{
+					dontcomedownagain=true;
+					dontcomeupagain=false;		
+					q.add(cell-length);
+					cell=cell-length;
+					continue;
+				}
+				dontcomerightagain=false;
+				dontcomeleftagain=false;
+				dontcomedownagain=false;
+				dontcomeupagain=false;	
+					s[xCell][yCell]='1';
+					q.removeLast();
+					cell=q.element();			
+				System.out.print(cell+",");				
+		}
 	}
 
 	public void display()
@@ -127,14 +190,11 @@ public class mazeCreator
 		n=s.nextInt();		
 		mazeCreator m=new mazeCreator(n);
 		m.create();
-//		m.display();
 		JFrame f=new JFrame("Maze");
         f.add(m.getGui());
-        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        f.setLocationByPlatform(true);
-        // ensures the frame is the minimum size it needs to be
-        // in order display the components within it
+    //    f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         f.pack();
         f.setVisible(true);
+        m.solve();
 	}
 }
