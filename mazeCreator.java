@@ -1,14 +1,17 @@
 package maze;
 
 import java.util.Scanner;
-import java.io.IOException;
-import java.util.Random;
+import javax.swing.*;
+import java.awt.*;
 
 public class mazeCreator 
 {
 	private int length=0,n=0;
 	char s[][];
-	int num=1;
+	int c=0;
+    private JButton b[][];
+//    JComponent gui;
+    JPanel gui;
 	mazeCreator(int n)
 	{
 		this.n=n;
@@ -18,25 +21,32 @@ public class mazeCreator
 	}
 	public void init()
 	{
+		gui = new JPanel();
+		gui.setLayout(new GridLayout(length,length));
+		b=new JButton[length][length];
 		for (int i=0;i<length;i++)
 		{
+			
 			for (int j=0;j<length;j++)
 			{
+			 	b[i][j]=new JButton();
 				if (i%2 == 0)
-				{
-					s[i][j]='-';
+				{	
+					b[i][j].setBackground(Color.BLACK);
+					b[i][j].setIcon(null);
 				}
 				else if (i%2 == 1)
 				{
 					if (j%2==0)
-						s[i][j]='|';
+						b[i][j].setBackground(Color.BLACK);
 					else 
-						s[i][j]= ' ';
-				}	
+						b[i][j].setBackground(Color.YELLOW);
+				}				
+			gui.add(b[i][j]);
 			}
 		}
-		s[1][0]=' ';
-		s[length-2][length-1]=' ';
+		b[1][0].setBackground(Color.WHITE);
+		b[length-2][length-1].setBackground(Color.WHITE);
 	}
 	
 	public int genRandom(int x)
@@ -48,19 +58,11 @@ public class mazeCreator
 	{
 		int cell=0,wall=0,w=0,xCell=0,yCell=0,xWall=0,yWall=0,adjCell=0,count=0;
 		DisjSets d=new DisjSets(n*n);
-		
-//		while ((d.find(n*n-1)) != 0  )
-//  	while (count != n*n-1 && d.find(n*n-1) != d.find(0))
  		while (count != n*n-1)
-//		while (d.find(n*n-1) != d.find(0))
-		{
- 			
+		{			
 			cell=genRandom(n*n);
 			xCell=2*(cell/n+1)-1;
 			yCell=2*(cell%n+1)-1;
-//			System.out.println("cell:"+cell);
-//			System.out.println("xCell"+xCell);
-//			System.out.println("yCell"+yCell);
 			w=genRandom(4);
 			if (w==0)
 			{
@@ -89,47 +91,21 @@ public class mazeCreator
 						
 			if ((xWall != 2*n && yWall != 2*n) && (xWall != 0 && yWall != 0))
 			{
-				
-				//d.display();
-//				System.out.println("w:"+w);
-//				System.out.println("xWall:"+xWall);
-//				System.out.println("yWall:"+yWall);
-//				if (s[xWall][yWall] !=' ' && d.find(adjCell)!= 0)
-//				System.out.println("cell:"+cell);
-//				System.out.println("adjCell:"+adjCell);
-//				System.out.println("ROOTcell:"+d.find(cell));
-//				System.out.println("ROOTadjCell:"+d.find(adjCell));
 				if (d.find(cell) != d.find(adjCell))
 				{
-					s[xWall][yWall]=' ';
-//					s[xCell][yCell]=' ';
+					b[xWall][yWall].setBackground(Color.WHITE);;
 					d.union(d.find(cell),d.find(adjCell));		
-//					System.out.println("Root:"+d.find(cell));
-//					System.out.println("Root of last:"+d.find(n*n-1));
-//					System.out.println("Root of first:"+d.find(0));
 					count++;
 				}	
-//				for (int i=0;i<n*n;i++)
-//				{
-//					if (d.find(cell) == cell)
-//						System.out.print(cell+",");					
-//				}
-//				System.out.println("");
-//				display();
 			}		
 		}
-		//Modify
-		s[2*(cell/n+1)-1][2*(cell%n+1)-1]=' ';
+	//	b[2*(cell/n+1)-1][2*(cell%n+1)-1].setBackground(Color.WHITE);;
  		System.out.println("Hint:"+d.find(0)+"..Yes:"+d.find(n*n-1));
  		System.out.println();
-//		System.out.println("count"+count);
-		
 	}
-	
-	
+
 	public void display()
 	{
-		//System.out.println("L:"+length);
 		for (int i=0;i<length;i++)
 		{
 			for (int j=0;j<length;j++)
@@ -139,16 +115,26 @@ public class mazeCreator
 			System.out.println("");
 		}
 	}
-	
+	public final JPanel getGui() 
+	{
+        return gui;
+	}
 	public static void main(String args[])
 	{
-		int n=0,l;
-		Scanner s= new Scanner(System.in);
+		int n=0;
+		Scanner s=new Scanner(System.in);
 		System.out.println("Please enter the grid size: ");
 		n=s.nextInt();		
 		mazeCreator m=new mazeCreator(n);
 		m.create();
-		m.display();
+//		m.display();
+		JFrame f=new JFrame("Maze");
+        f.add(m.getGui());
+        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        f.setLocationByPlatform(true);
+        // ensures the frame is the minimum size it needs to be
+        // in order display the components within it
+        f.pack();
+        f.setVisible(true);
 	}
-
 }
