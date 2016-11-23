@@ -6,26 +6,28 @@ import java.awt.*;
 
 public class mazeCreator 
 {
-	private int length=0,n=0;	
-	char s[][];
+	private int rows=0,columns=0,m=0,n=0;	
+	private char s[][];
     private JButton b1[][],b2[][];
     JPanel gui1,gui2;
-	mazeCreator(int n)
+	mazeCreator(int m,int n)
 	{
+		this.m=m;
 		this.n=n;
-		this.length=2*n+1;
-		s=new char[length][length];
+		this.rows=2*m+1;
+		this.columns=2*n+1;
+		s=new char[rows][columns];
 		init();		
 	}
 	
 	public void init()
 	{
 		gui1 = new JPanel();
-		gui1.setLayout(new GridLayout(length,length));
-		b1=new JButton[length][length];
-		for (int i=0;i<length;i++)
+		gui1.setLayout(new GridLayout(rows,columns));
+		b1=new JButton[rows][columns];
+		for (int i=0;i<rows;i++)
 		{			
-			for (int j=0;j<length;j++)
+			for (int j=0;j<columns;j++)
 			{
 			 	b1[i][j]=new JButton();
 			 	b1[i][j].setEnabled(false);
@@ -56,22 +58,22 @@ public class mazeCreator
 		}
 		b1[1][0].setBackground(Color.WHITE);
 		s[1][0]=' ';
-		b1[length-2][length-1].setBackground(Color.WHITE);
-		s[length-2][length-1]=' ';
+		b1[rows-2][columns-1].setBackground(Color.WHITE);
+		s[rows-2][columns-1]=' ';
 	}
 	
 	public int genRandom(int x)
 	{
-		return (int)(java.lang.Math.random()*10*n*n)%x;
+		return (int)(java.lang.Math.random()*10*m*n)%x;
 	}
 	
 	public void create()
 	{
 		int cell=0,w=0,xCell=0,yCell=0,xWall=0,yWall=0,adjCell=0,count=0;
-		DisjSets d=new DisjSets(n*n);
- 		while (count != n*n-1)
+		DisjSets d=new DisjSets(m*n);
+ 		while (count != m*n -1)
 		{			
-			cell=genRandom(n*n);
+			cell=genRandom(m*n);
 			xCell=2*(cell/n+1)-1;
 			yCell=2*(cell%n+1)-1;
 			w=genRandom(4);
@@ -100,8 +102,9 @@ public class mazeCreator
 				adjCell=cell+1;
 			}
 						
-			if ((xWall != 2*n && yWall != 2*n) && (xWall != 0 && yWall != 0))
+			if ((xWall != 2*m && yWall != 2*n) && (xWall != 0 && yWall != 0))
 			{
+				
 				if (d.find(cell) != d.find(adjCell))
 				{
 					b1[xWall][yWall].setBackground(Color.WHITE);
@@ -111,18 +114,19 @@ public class mazeCreator
 				}	
 			}		
 		}
+
 	}
 	
 	public void solve()
 	{
 		int cell=0,xCell=0,yCell=0;
-		cell=length;
+		cell=columns;
 		java.util.LinkedList<Integer> q=new java.util.LinkedList<Integer>();
 		q.add(cell);
-		while(cell != length*length-1-length)
+		while(cell != rows*columns-1-columns)
 		{
-			xCell=cell/length;
-			yCell=cell%length;
+			xCell=cell/columns;
+			yCell=cell%columns;
 				if (s[xCell][yCell+1] == ' ')				
 				{
 					s[xCell][yCell]='1';
@@ -133,8 +137,8 @@ public class mazeCreator
 				if (s[xCell+1][yCell] == ' ')
 				{
 					s[xCell][yCell]='1';
-					q.add(cell+length);
-					cell=cell+length;
+					q.add(cell+columns);
+					cell=cell+columns;
 					continue;
 				}	
 	
@@ -149,41 +153,41 @@ public class mazeCreator
 				if (s[xCell-1][yCell] == ' ')
 				{
 					s[xCell][yCell]='1';	
-					q.add(cell-length);
-					cell=cell-length;
+					q.add(cell-columns);
+					cell=cell-columns;
 					continue;
 				}
 
 					s[xCell][yCell]='1';
 					q.removeLast();
 					cell=q.peekLast();
-					xCell=cell/length;
-					yCell=cell%length;
+					xCell=cell/columns;
+					yCell=cell%columns;
 					s[xCell][yCell]=' ';
 		}
 		
 		
 		gui2 = new JPanel();
-		gui2.setLayout(new GridLayout(length,length));
+		gui2.setLayout(new GridLayout(rows,columns));
 		b2=b1;
 		while(!q.isEmpty())
 		{
 			cell=q.removeFirst();
-			xCell=cell/length;
-			yCell=cell%length;
+			xCell=cell/columns;
+			yCell=cell%columns;
 			b2[xCell][yCell].setBackground(Color.BLUE);
 		}
-		for (int i=0;i<length;i++)			
-			for (int j=0;j<length;j++)
+		for (int i=0;i<rows;i++)			
+			for (int j=0;j<columns;j++)
 				gui2.add(b2[i][j]);
 			
 	}
 
 	public void display()
 	{
-		for (int i=0;i<length;i++)
+		for (int i=0;i<rows;i++)
 		{
-			for (int j=0;j<length;j++)
+			for (int j=0;j<columns;j++)
 			{
 					System.out.print(s[i][j]);
 			}
@@ -200,19 +204,21 @@ public class mazeCreator
 	}
 	public static void main(String args[])
 	{
-		int n=0;
+		int m=0,n=0;
 		Scanner sc=new Scanner(System.in);
-		System.out.println("Please enter the grid size: ");
+		System.out.println("Please number of rows of grid: ");
+		m=sc.nextInt();	
+		System.out.println("Please number of columns of grid: ");
 		n=sc.nextInt();		
 		sc.close();
-		mazeCreator m=new mazeCreator(n);
+		mazeCreator mc=new mazeCreator(m,n);
 
-		m.create();
-		m.display();
+		mc.create();
+		mc.display();
 
-        m.solve();
+        mc.solve();
         JFrame f2=new JFrame("Maze2");
-        f2.add(m.getGui2());
+        f2.add(mc.getGui2());
         f2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         f2.pack();
         f2.setVisible(true);
