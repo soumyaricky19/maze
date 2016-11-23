@@ -175,7 +175,7 @@ public class mazeCreator
 			cell=q.removeFirst();
 			xCell=cell/columns;
 			yCell=cell%columns;
-			b2[xCell][yCell].setBackground(Color.BLUE);
+			b2[xCell][yCell].setBackground(Color.YELLOW);
 		}
 		for (int i=0;i<rows;i++)			
 			for (int j=0;j<columns;j++)
